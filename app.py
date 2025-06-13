@@ -20,18 +20,30 @@ from fastapi import FastAPI
 import gdown
 import sqlite3
 
-# Google Drive file ID extracted from the shareable link
 file_id = "1SqXwY2WwW9ufazM93Wfs6HbmuwmzVXHD"
 download_url = f"https://drive.google.com/uc?id={file_id}"
-
-# Download destination path
 local_path = "/tmp/data.db"
 
-# Download the file
-gdown.download(download_url, local_path, quiet=False)
+# Tell gdown to store cookies in /tmp (writable)
+os.environ['GDOWN_COOKIE_PATH'] = '/tmp/.gdown_cookies.txt'
 
-# Connect to the SQLite database
-conn = sqlite3.connect(local_path)
+def download_db():
+    if not os.path.exists(local_path):
+        gdown.download(download_url, local_path, quiet=False)
+    else:
+        print("DB file already exists, skipping download")
+
+@app.on_event("startup")
+async def startup_event():
+    download_db()
+    global conn
+    conn = sqlite3.connect(local_path)
+    print("Database connected")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    conn.close()
+    print("Database connection closed")
 app = FastAPI()
 
 @app.get("/")
