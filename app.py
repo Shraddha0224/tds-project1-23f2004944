@@ -17,7 +17,6 @@ import uvicorn
 import traceback
 from dotenv import load_dotenv
 from fastapi import FastAPI
-import sqlite3
 
 file_id = "1SqXwY2WwW9ufazM93Wfs6HbmuwmzVXHD"
 download_url = f"https://drive.google.com/uc?id={file_id}"
@@ -784,6 +783,8 @@ async def health_check():
             status_code=500,
             content={"status": "unhealthy", "error": str(e), "api_key_set": bool(API_KEY)}
         )
-#checking
-#if __name__ == "__main__":
- #   uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True) 
+
+
+if __name__ == "__main__":
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+
