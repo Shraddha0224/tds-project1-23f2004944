@@ -17,33 +17,21 @@ import uvicorn
 import traceback
 from dotenv import load_dotenv
 from fastapi import FastAPI
-import gdown
 import sqlite3
 
 file_id = "1SqXwY2WwW9ufazM93Wfs6HbmuwmzVXHD"
 download_url = f"https://drive.google.com/uc?id={file_id}"
 local_path = "/tmp/data.db"
-
-# Tell gdown to store cookies in /tmp (writable)
-os.environ['GDOWN_COOKIE_PATH'] = '/tmp/.gdown_cookies.txt'
-
-def download_db():
-    if not os.path.exists(local_path):
-        gdown.download(download_url, local_path, quiet=False)
-    else:
-        print("DB file already exists, skipping download")
+local_path = "/tmp/data.db"
 
 @app.on_event("startup")
 async def startup_event():
-    download_db()
-    global conn
-    conn = sqlite3.connect(local_path)
-    print("Database connected")
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    conn.close()
-    print("Database connection closed")
+    if not os.path.exists(local_path):
+        print("DB file missing at startup")
+    else:
+        global conn
+        conn = sqlite3.connect(local_path)
+        print("Database connected")
 app = FastAPI()
 
 @app.get("/")
