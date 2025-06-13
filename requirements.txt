@@ -1,9 +1,9 @@
-fastapi
-uvicorn
+fastapi==0.95.2
+uvicorn==0.23.2
 python-dotenv
 aiohttp
-numpy
-pydantic
+numpy==1.21.6
+pydantic==1.10.13
 beautifulsoup4
 html2text
 tqdm
@@ -11,6 +11,5 @@ markdown
 python-multipart
 setuptools
 aiofiles
-sqlite3
 pillow
 openai
